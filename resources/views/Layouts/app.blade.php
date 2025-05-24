@@ -13,7 +13,7 @@
     <body class="bg-gray-100">
            <header class="p-5 border-b bg-white shadow">
             <div class="container mx-auto flex justify-between items-center">
-                <a class="text-3xl font-black">
+                <a class="text-3xl font-black" href="">
                     DevStagram
                     </a> 
                     

@@ -1,62 +1,80 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\Post;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Controller; // ✅ Esta es la clase base correcta
+use App\Models\Post; // Modelo Post (publicaciones)
+use App\Models\User; // Modelo User (usuarios)
+use Illuminate\Http\Request; // Para manejar solicitudes HTTP
+use Illuminate\Routing\Controller; // Clase base del controlador
 
 class PostController extends Controller
 {
     public function __construct()
     {
-        //$this->middleware(['auth', 'verified']);
+        // Middleware para requerir autenticación (usuario logueado)
+        // También podrías usar 'verified' si quieres usuarios con email verificado
         $this->middleware(['auth']);
     }
+
+    // Muestra los posts del usuario (vista dashboard)
     public function index(User $user)
-    {  
+    {
+        $posts = Post::where('user_id',$user->id)->paginate(5);
+        // Se pasa un objeto User a la vista 'dashboard'
+        // Esto utiliza route model binding de Laravel
         return view('dashboard', [
-            'user' => $user,  
+            'user' => $user,
+            'posts' =>$posts,
         ]);
     }
 
-
-    public function create() 
+    // Muestra el formulario para crear un nuevo post
+    public function create()
     {
-        return view('posts.create');
+        return view('posts.create'); // Vista con el formulario
     }
 
-    // public function store(Request $request){
-         
-    //    $request->validate([
-    //         'titulo' => 'required|max:250',
-    //         'descripcion' => 'required|max:250',
-    //         'imagen' => 'required|string'
-    //     ]);
-
-    //     Post::create([
-    //         'titulo'=>$request->titulo,
-    //         'descripcion'=>$request->descripcion,
-    //         'imagen'=>$request->imagen,
-    //         'user_id'=> auth()->id()
-    //     ]);
-    //        return redirect()->route('posts.index', auth()->user()->username);
-    // }
+    // Guarda el post en la base de datos
     public function store(Request $request)
     {
+        // Validar los datos del formulario
         $datos = $request->validate([
-            'titulo' => 'required|max:250',
-            'descripcion' => 'required|max:250',
-            'imagen' => 'required|string'
+            'titulo' => 'required|max:250',       // Campo obligatorio, máximo 250 caracteres
+            'descripcion' => 'required|max:250',  // Campo obligatorio, máximo 250 caracteres
+            'imagen' => 'required|string'         // Campo obligatorio (nombre de archivo de imagen)
         ]);
 
-        // Agregar el ID del usuario autenticado
+        // Asociar el post al usuario autenticado
         $datos['user_id'] = auth()->id();
 
+        // Crear el post en la base de datos
         Post::create($datos);
 
+        // Redireccionar al dashboard del usuario
         return redirect()->route('posts.index', auth()->user()->username);
+
+        // --- Alternativa comentada ---
+        // Otra forma de guardar el post, usando la relación con el usuario:
+        //
+        // $request->user()->posts()->create([
+        //     'titulo'=> $request->titulo,
+        //     'descripcion' => $request->descripcion,
+        //     'imagen'=>  $request->imagen,
+        //     'user_id'=> auth()->user()->id,
+        // ]);
+        //
+        // return redirect()->route('posts.index', auth()->user()->username);
+    }
+    public function show(User $user, Post $post)
+    {
+        // Validamos que el post pertenezca al usuario (seguridad)
+        // if ($post->user_id !== $user->id) {
+        //     abort(403); // o 404 si prefieres no revelar su existencia
+        // }
+
+        return view('posts.show', [
+            'user' => $user,
+            'post' => $post,
+        ]);
     }
 
- 
 }
