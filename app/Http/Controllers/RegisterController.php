@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -41,6 +42,7 @@ class RegisterController extends Controller
         // ]);
         //otra forma
         auth()->attempt($request->only('email','password'));
-        return redirect()->route('posts.index');
+        return redirect()->route('posts.index',auth()->user());
+        
     }
 } 
