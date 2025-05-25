@@ -5,14 +5,17 @@ use App\Models\Post; // Modelo Post (publicaciones)
 use App\Models\User; // Modelo User (usuarios)
 use Illuminate\Http\Request; // Para manejar solicitudes HTTP
 use Illuminate\Routing\Controller; // Clase base del controlador
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\File;
 
 class PostController extends Controller
-{
+{ 
+    use AuthorizesRequests;
     public function __construct()
     {
         // Middleware para requerir autenticación (usuario logueado)
         // También podrías usar 'verified' si quieres usuarios con email verificado
-        $this->middleware(['auth']);
+        $this->middleware(['auth'])->except(['show','index']);
     }
 
     // Muestra los posts del usuario (vista dashboard)
@@ -76,5 +79,22 @@ class PostController extends Controller
             'post' => $post,
         ]);
     }
+
+    public function destroy(Post $post)
+    {
+        $this->authorize('delete', $post);
+
+        // Eliminar imagen si existe
+        $imagen_path = public_path('uploads/' . $post->imagen);
+        if  (File::exists($imagen_path)){
+            unlink($imagen_path);
+        }
+
+        $post->delete();
+
+        return redirect()->route('posts.index', auth()->user()->username)
+            ->with('mensaje', 'Publicación eliminada correctamente.');
+    }
+    
 
 }

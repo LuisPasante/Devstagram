@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\ComentarioController;
 use App\Http\Controllers\ImagenController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +30,11 @@ Route::get('/{user:username}/posts/{post}', [PostController::class, 'show'])->na
 
 Route::post('/imagenes', [ImagenController::class, 'store'])->name('imagenes.store');
 
+// Comentarios
+Route::post('/{user:username}/posts/{post}', [ComentarioController::class, 'store'])->name('comentarios.store');
+Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy'); 
 
-
+//Like a las fotos
+Route::post('posts/{post}/like',[LikeController::class,'store'])->name('posts.likes.store');
+Route::delete('posts/{post}/like',[LikeController::class,'destroy'])->name('posts.likes.destroy');
  
