@@ -21,7 +21,7 @@ class PostController extends Controller
     // Muestra los posts del usuario (vista dashboard)
     public function index(User $user)
     {
-        $posts = Post::where('user_id',$user->id)->paginate(5);
+        $posts = Post::where('user_id',$user->id)->latest()->paginate(5);
         // Se pasa un objeto User a la vista 'dashboard'
         // Esto utiliza route model binding de Laravel
         return view('dashboard', [
