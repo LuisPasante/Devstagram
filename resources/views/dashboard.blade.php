@@ -74,4 +74,4 @@ Perfil {{$user->username}}
 </section>
 @endsection
 
-
+   

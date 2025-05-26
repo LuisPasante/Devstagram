@@ -10,47 +10,10 @@
     <a> 
         <img src="{{asset('uploads') . '/' . $post->imagen }}" alt="Imagen del post {{ $post->titulo }}">
         <div class="p-3 flex items-center gap-2">
-            @auth
-            @if($post->checkLike(auth()->user()))
-                <form action="{{route('posts.likes.destroy',$post)}}" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="my-4 "> 
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="red" 
-                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
-                            class="w-6 h-6 text-red-500">
-                            <path stroke-linecap="round" stroke-linejoin="round" 
-                                d="M21.752 7.356c0-2.485-2.09-4.506-4.675-4.506
-                                -1.884 0-3.513 1.2-4.327 2.856
-                                -.814-1.656-2.443-2.856-4.327-2.856
-                                -2.585 0-4.675 2.021-4.675 4.506
-                                0 5.25 9.002 10.119 9.002 10.119s9.002-4.869 9.002-10.119z" />
-                        </svg>
-
-                    </button>
-                </form>
-            @else
-               <form action="{{route('posts.likes.store',$post)}}" method="POST">
-                    @csrf
-                    <button type="submit" class="my-4 "> 
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="white" 
-                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
-                            class="w-6 h-6 text-red-500">
-                            <path stroke-linecap="round" stroke-linejoin="round" 
-                                d="M21.752 7.356c0-2.485-2.09-4.506-4.675-4.506
-                                -1.884 0-3.513 1.2-4.327 2.856
-                                -.814-1.656-2.443-2.856-4.327-2.856
-                                -2.585 0-4.675 2.021-4.675 4.506
-                                0 5.25 9.002 10.119 9.002 10.119s9.002-4.869 9.002-10.119z" />
-                        </svg>
-
-                    </button>
-                </form>
-            @endif
-           
+            @auth 
+                <livewire:like-post :post="$post"/>  
             @endauth 
-            <p class="font-bold">{{$post->likes->count()}} </p> 
-            <span class="font-normal">Likes</span>
+            
         </div>
 
         <div class="">
